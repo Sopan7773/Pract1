@@ -1,0 +1,58 @@
+#include <iostream>
+#include <omp.h>
+#include <queue>
+#include <stack>
+
+using namespace std;
+
+void bfs(int graph[4][4], int start_node){
+    queue <int> frontier;
+    int visited[4] = {0};
+    visited[start_node] = 1;
+    frontier.push(start_node);
+    while(!frontier.empty()){
+        int node = frontier.front();
+        frontier.pop();
+        cout << "Exploring Node " << node << endl;
+        #pragma omp parallel for
+        for (int i = 0; i < 4; i++){
+            if (graph[node][i] == 1 && visited[i] != 1){
+                cout << i << endl;
+                visited[i] = 1;
+                frontier.push(i);
+            }
+        }
+    }
+}
+
+void dfs(int graph[4][4], int start_node){
+    stack <int> frontier;
+    int visited[4] = {0};
+    visited[start_node] = 1;
+    frontier.push(start_node);
+    while(!frontier.empty()){
+        int node = frontier.top();
+        frontier.pop();
+        cout << "Exploring Node " << node << endl;
+        #pragma omp parallel for
+        for (int i = 0; i < 4; i++){
+            if (graph[node][i] == 1 && visited[i] != 1){
+                cout << i << endl;
+                visited[i] = 1;
+                frontier.push(i);
+            }
+        }
+    }
+}
+
+int main(){
+    int graph[4][4] = {{0,1,1,0},
+                       {1,0,0,1},
+                       {1,0,0,0},
+                       {0,1,0,0}};
+    cout << endl << "Running BFS" << endl;
+    bfs(graph, 0);
+    cout << endl << "Running DFS" << endl;
+    dfs(graph, 2);
+    return 0;
+}
